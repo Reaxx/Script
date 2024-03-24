@@ -2,7 +2,7 @@
 
 ################################################################################
 # Script Name:    sysmon.sh
-# Version:        0.4
+# Version:        0.5
 # Author:         Jonny Svensson
 # Date:           March 16, 2024
 # Description:    This script monitors system statistics while running the

@@ -2,7 +2,7 @@
 
 ################################################################################
 # Script Name:    afterdeploy.sh
-# Version:        0.2
+# Version:        0.3
 # Author:         Jonny Svensson
 # Date:           March 16, 2024
 # Description:    This script monitors system statistics, mounts evidence files while running the
