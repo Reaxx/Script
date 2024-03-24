@@ -1,4 +1,4 @@
-desktop.ini
+*.ini
 *.txt
 *.csv
 .vscode/settings.json
