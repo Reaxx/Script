@@ -2,3 +2,4 @@ desktop.ini
 *.txt
 *.csv
 .vscode/settings.json
+.vscode/launch.json
