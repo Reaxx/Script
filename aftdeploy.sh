@@ -2,7 +2,7 @@
 
 ################################################################################
 # Script Name:    afterdeploy.sh
-# Version:        0.2
+# Version:        0.3
 # Author:         Jonny Svensson
 # Date:           March 16, 2024
 # Description:    This script monitors system statistics, mounts evidence files while running the
@@ -11,8 +11,8 @@
 
 # Function to set parameters
 set_params() {
-    # Command used to start the process to be evaluated
-    appCommand="test"
+    # Command used to start the process to be evaluated, leave empty for manual use
+    appCommand=""
     # Name of the process to be evaluated (used for grep)
     appPrName="test"
     # Default interval between measures (not respected by measures generating large outputs)
@@ -23,7 +23,7 @@ set_params() {
     evdFile="/home/kali/Evidence/SCHARDT.dd"
 
     # Log file path
-    log_file="./log.txt"
+    log_file="/home/kali/log.txt"
 }
 
 # Function to log messages
@@ -53,7 +53,7 @@ validate_params() {
 
 # Function to start measuring system statistics
 start_statistics() {
-    folder="./$(generate_filename)$appPrName"
+    folder="/home/kali/Script/$(generate_filename)$appPrName"
     processes_file="$folder/$(generate_filename "processes").txt"
     cpu_file="$folder/$(generate_filename "cpu").txt"
     mem_file="$folder/$(generate_filename "mem").txt"
@@ -117,7 +117,8 @@ main() {
     start_statistics
 
     # Mount evidence file
-    losetup -fP "$evdFile"
+    losetup /dev/loop99 -P "$evdFile"
+
     log "Evidence mounted"
 
     # Start process if appCommand is not empty
@@ -134,6 +135,12 @@ main() {
     stop_statistics
 
     log "Script done."
+
+    # Make log file available to all users
+    chmod 777 "$log_file"
+
+    #Unmount evidence file
+    losetup -d /dev/loop99
 }
 
 # Call the main function
