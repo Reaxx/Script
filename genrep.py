@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 
 
 def prepare_header(filepath):
@@ -25,15 +26,42 @@ def prepare_header(filepath):
             file.write(header_disk + contents)
 
 
-# Read data from the file
-with open('data.txt', 'r') as file:
-    lines = file.readlines()
+def calculate_report(values):
+    report_values = {}
+    for value in values:
+        report_values[value] = {}
+
+        report_values[value]["max"] = max(values[value])
+        report_values[value]["min"] = min(values[value])
+        report_values[value]["avg"] = sum(values[value]) / len(values[value])
+
+    return (report_values)
 
 
-folder = "240317184418_test"
+def create_report(folder, filename, values):
+    with open(folder+"/"+filename + '_report.txt', 'w') as file:
+        for value in values:
+            file.write(value + "\n")
+            file.write("Max: " + str(values[value]["max"]) + "\n")
+            file.write("Min: " + str(values[value]["min"]) + "\n")
+            file.write("Avg: " + str(values[value]["avg"]) + "\n\n")
+
+
+# Main
+# Read folder from cli argument
+if len(sys.argv) > 1:
+    folder = sys.argv[1]
+
 # Read all files in folder
 for filename in os.listdir(folder):
     headers = {}
+    values = {}
+
+    result_path = folder + "_results"
+    # create folder if not exists
+    if not os.path.exists(result_path):
+        os.makedirs(result_path)
+
     file_path = folder + "/" + filename
     prepare_header(file_path)
 
@@ -41,30 +69,52 @@ for filename in os.listdir(folder):
 
         lines = file.readlines()
         # Open the output CSV file
-        with open(filename+'.csv', 'w', newline='') as csvfile:
+        with open(result_path+'/'+filename+'.csv', 'w', newline='') as csvfile:
+
             writer = csv.writer(csvfile)
 
             for index, line in enumerate(lines):
                 if not line.startswith('Linux') and line.strip():
-                    line_a = line.split()
+                    line_array = line.split()
 
                     # If headers has not been set, assume line is headers
                     if not headers:
                         if "cpu" in filename or "mem" in filename or "disk" in filename:
                             # Remove the first two elements from line_a
-                            del line_a[:2]
+                            del line_array[:2]
                             # Add element "timestamp" before the rest of the elements
-                            line_a.insert(0, "timestamp")
+                            line_array.insert(0, "timestamp")
 
-                        headers = line_a
+                        headers = line_array
+
                         # Write headers to the CSV file
                         writer.writerow(headers)
                     else:
                         if "cpu" in filename or "mem" in filename or "disk" in filename:
                             # Merge element 0 1 together
-                            line_a[0] = line_a[0] + ' ' + line_a[1]
+                            line_array[0] = line_array[0] + ' ' + line_array[1]
                             # Remove element 1 (PM)
-                            del line_a[1:2]
+                            del line_array[1:2]
+
+                        # Step through each value in line_array, if they are float, save
+                        for index, value in enumerate(line_array):
+                            # Try to convert value to float, if it fails continue to next value
+                            try:
+                                # If value is not float, continue to next value
+                                value = float(value)
+
+                                # check if values[headers[index]] exists, if not create it
+                                if headers[index] not in values:
+                                    values[headers[index]] = []
+
+                                # Add number to the end of header[index]
+                                values[headers[index]].append(value)
+
+                            except:
+                                continue
 
                         # Write the line to the CSV file
-                        writer.writerow(line_a)
+                        writer.writerow(line_array)
+
+        r_values = calculate_report(values)
+        create_report(result_path, filename, r_values)
