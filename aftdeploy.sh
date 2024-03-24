@@ -11,8 +11,8 @@
 
 # Function to set parameters
 set_params() {
-    # Command used to start the process to be evaluated
-    appCommand="test"
+    # Command used to start the process to be evaluated, leave empty for manual use
+    appCommand=""
     # Name of the process to be evaluated (used for grep)
     appPrName="test"
     # Default interval between measures (not respected by measures generating large outputs)
@@ -117,7 +117,8 @@ main() {
     start_statistics
 
     # Mount evidence file
-    losetup -fP "$evdFile"
+    losetup /dev/loop99 -P "$evdFile"
+
     log "Evidence mounted"
 
     # Start process if appCommand is not empty
@@ -137,6 +138,9 @@ main() {
 
     # Make log file available to all users
     chmod 777 "$log_file"
+
+    #Unmount evidence file
+    losetup -d /dev/loop99
 }
 
 # Call the main function
