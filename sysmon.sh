@@ -22,7 +22,7 @@ set_params() {
 }
 
 # Log file path
-log_file="./log.txt"
+log_file="/home/kali/Script/log.txt"
 
 # Function to log messages
 log() {
@@ -56,7 +56,7 @@ validate_params() {
 
 # Function to start measuring system statistics
 start_statistics() {
-  folder="./$(generate_filename)$appPrName"
+  folder="/home/kali/Script/$(generate_filename)$appPrName"
   processes_file="$folder/$(generate_filename "processes").txt"
   cpu_file="$folder/$(generate_filename "cpu").txt"
   mem_file="$folder/$(generate_filename "mem").txt"
