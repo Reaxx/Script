@@ -2,7 +2,7 @@
 
 ################################################################################
 # Script Name:    sysmon.sh
-# Version:        0.5
+# Version:        0.6
 # Author:         Jonny Svensson
 # Date:           March 16, 2024
 # Description:    This script monitors system statistics while running the
@@ -68,7 +68,8 @@ start_statistics() {
   mkdir -p "$folder"
 
   # Measure RAM, CPU, and disk usage, filter for the given process, and respect the interval
-  top -b -d "$measureInterval" | grep "$appPrName" >"$processes_file" &
+  #top -b -d "$measureInterval" | grep "$appPrName" >"$processes_file" &
+  top -b -d "$measureInterval" | awk "/${appPrName}/ {print strftime(\"%I:%M:%S %p\"), \$0}" >"$processes_file" &
 
   # Measure CPU, memory, and hard disk usage each interval
   sar "$measureInterval" >"$cpu_file" &
