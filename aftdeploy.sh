@@ -2,7 +2,7 @@
 
 ################################################################################
 # Script Name:    afterdeploy.sh
-# Version:        0.3
+# Version:        0.5
 # Author:         Jonny Svensson
 # Date:           March 16, 2024
 # Description:    This script monitors system statistics, mounts evidence files while running the
@@ -23,7 +23,7 @@ set_params() {
     evdFile="/home/kali/Evidence/SCHARDT.dd"
 
     # Log file path
-    log_file="/home/kali/log.txt"
+    log_file="/home/kali/Script/log.txt"
 }
 
 # Function to log messages
@@ -67,7 +67,9 @@ start_statistics() {
     chmod 777 "$folder"
 
     # Measure RAM, CPU, and disk usage, filter for the given process, and respect the interval
-    top -b -d "$measureInterval" | grep "$appPrName" >"$processes_file" &
+    #top -b -d 1 | awk '/autopsy/ {print strftime("%Y-%m-%d-%H:%M:%S"), $0}'
+    # top -b -d "$measureInterval" | grep "$appPrName" >"$processes_file" &
+    top -b -d "$measureInterval" | awk "/${appPrName}/ {print strftime(\"%I:%M:%S %p\"), \$0}" >"$processes_file" &
 
     # Measure CPU, memory, and hard disk usage each interval
     sar "$measureInterval" >"$cpu_file" &
