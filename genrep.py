@@ -1,3 +1,13 @@
+################################################################################
+# Script Name:    genrep.py
+# Version:        0.2
+# Author:         Jonny Svensson
+# Date:           March 25, 2024
+# Description:    Takes the results from sysmon.sh and aftdeploy.sh and turn them
+#                 csv files as well as generates a report with max, min and avg
+#                 values for each value
+################################################################################
+
 import csv
 import os
 import sys
@@ -5,8 +15,8 @@ import sys
 
 def prepare_header(filepath):
     # Define the header strings for processes and disk
-    header_processes = "PID\t USER\tPR\tNI\t VIRT\tRES\tSHR\tS\t%CPU\t%MEM\tTIME\n"
-    header_disk = "DEV\t tps\trkB/s\twkB/s\tdkB/s\tareq-sz\t aqu-sz\tawait\t %util\n"
+    header_processes = "Time\tPM\t PID\t USER\tPR\tNI\t VIRT\tRES\tSHR\tS\t%CPU\t%MEM\tTIME\tProcess\n"
+    header_disk = "Time\tPM\tDEV\t tps\trkB/s\twkB/s\tdkB/s\tareq-sz\t aqu-sz\tawait\t %util\n"
 
     with open(filepath, 'r+') as file:
         f_line = file.readline()
@@ -79,22 +89,23 @@ for filename in os.listdir(folder):
 
                     # If headers has not been set, assume line is headers
                     if not headers:
-                        if "cpu" in filename or "mem" in filename or "disk" in filename:
-                            # Remove the first two elements from line_a
-                            del line_array[:2]
-                            # Add element "timestamp" before the rest of the elements
-                            line_array.insert(0, "timestamp")
-
+                        # Remove the first two elements from line_a
+                        del line_array[:2]
+                        # Add element "timestamp" before the rest of the elements
+                        line_array.insert(0, "timestamp")
                         headers = line_array
 
                         # Write headers to the CSV file
                         writer.writerow(headers)
                     else:
-                        if "cpu" in filename or "mem" in filename or "disk" in filename:
-                            # Merge element 0 1 together
-                            line_array[0] = line_array[0] + ' ' + line_array[1]
-                            # Remove element 1 (PM)
-                            del line_array[1:2]
+
+                        # Skip if line_array has less then 2 elemnts
+                        if len(line_array) < 2:
+                            continue
+                        # Merge element 0 1 together
+                        line_array[0] = line_array[0] + ' ' + line_array[1]
+                        # Remove element 1 (PM)
+                        del line_array[1:2]
 
                         # Step through each value in line_array, if they are float, save
                         for index, value in enumerate(line_array):
