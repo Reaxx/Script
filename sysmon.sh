@@ -21,9 +21,6 @@ set_params() {
   hardDrive=sda
 }
 
-# Log file path
-log_file="/home/kali/Script/log.txt"
-
 # Function to log messages
 log() {
   local message="$1"
@@ -61,6 +58,9 @@ start_statistics() {
   cpu_file="$folder/$(generate_filename "cpu").txt"
   mem_file="$folder/$(generate_filename "mem").txt"
   disk_file="$folder/$(generate_filename "disk").txt"
+
+  # Set log file path
+  log_file="$folder/log.txt"
 
   log "Starting statistics"
 

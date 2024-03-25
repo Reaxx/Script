@@ -21,9 +21,6 @@ set_params() {
     hardDrive=sda
     # Evidence file
     evdFile="/home/kali/Evidence/SCHARDT.dd"
-
-    # Log file path
-    log_file="/home/kali/Script/log.txt"
 }
 
 # Function to log messages
@@ -58,6 +55,9 @@ start_statistics() {
     cpu_file="$folder/$(generate_filename "cpu").txt"
     mem_file="$folder/$(generate_filename "mem").txt"
     disk_file="$folder/$(generate_filename "disk").txt"
+
+    # Set log file path
+    log_file="$folder/log.txt"
 
     log "Starting statistics"
 
