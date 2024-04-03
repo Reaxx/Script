@@ -39,6 +39,10 @@ def prepare_header(filepath):
 def calculate_report(values):
     report_values = {}
     for value in values:
+        # Ignores empty values
+        if len(values[value]) == 0:
+            continue
+
         report_values[value] = {}
 
         report_values[value]["max"] = max(values[value])
@@ -99,9 +103,10 @@ for filename in os.listdir(folder):
                         writer.writerow(headers)
                     else:
 
-                        # Skip if line_array has less then 2 elemnts
+                        # Skip if line_array has less then 2 elements
                         if len(line_array) < 2:
                             continue
+
                         # Merge element 0 1 together
                         line_array[0] = line_array[0] + ' ' + line_array[1]
                         # Remove element 1 (PM)
@@ -114,12 +119,19 @@ for filename in os.listdir(folder):
                                 # If value is not float, continue to next value
                                 value = float(value)
 
+                                # set current header
+                                c_header = headers[index]
+
                                 # check if values[headers[index]] exists, if not create it
-                                if headers[index] not in values:
-                                    values[headers[index]] = []
+                                if c_header not in values:
+                                    values[c_header] = []
+
+                                # Skips leading zero-values until testing starts
+                                if (value == 0 and len(values[c_header]) == 0):
+                                    continue
 
                                 # Add number to the end of header[index]
-                                values[headers[index]].append(value)
+                                values[c_header].append(value)
 
                             except:
                                 continue
