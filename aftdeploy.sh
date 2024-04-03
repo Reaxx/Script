@@ -2,7 +2,7 @@
 
 ################################################################################
 # Script Name:    afterdeploy.sh
-# Version:        0.5
+# Version:        0.4
 # Author:         Jonny Svensson
 # Date:           March 16, 2024
 # Description:    This script monitors system statistics, mounts evidence files while running the
@@ -63,8 +63,6 @@ start_statistics() {
 
     # Create directory
     mkdir -p "$folder"
-    # Make folder avalbie to all users
-    chmod 777 "$folder"
 
     # Measure RAM, CPU, and disk usage, filter for the given process, and respect the interval
     #top -b -d 1 | awk '/autopsy/ {print strftime("%Y-%m-%d-%H:%M:%S"), $0}'
@@ -138,8 +136,8 @@ main() {
 
     log "Script done."
 
-    # Make log file available to all users
-    chmod 777 "$log_file"
+    # Make files available to all users
+    chmod -R 777 "$folder"
 
     #Unmount evidence file
     losetup -d /dev/loop99
